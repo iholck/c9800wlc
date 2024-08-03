@@ -51,13 +51,13 @@ PAYLOAD = [
 ]
 
 
-def get_scanner(hass: HomeAssistant, config: ConfigType) -> CiscoDeviceScanner | None:
+def get_scanner(hass: HomeAssistant, config: ConfigType) -> Cisco9800DeviceScanner | None:
     """Validate the configuration and return a Cisco scanner."""
-    scanner = CiscoDeviceScanner(config[DOMAIN])
+    scanner = Cisco9800DeviceScanner(config[DOMAIN])
 
     return scanner if scanner.success_init else None
 
-class CiscoDeviceScanner(DeviceScanner):
+class Cisco9800DeviceScanner(DeviceScanner):
     """Class which queries a wireless router running Cisco IOS firmware."""
 
     def __init__(self, config):
@@ -70,7 +70,11 @@ class CiscoDeviceScanner(DeviceScanner):
         self.last_results = {}
 
         self.success_init = self._update_info()
-        _LOGGER.info("Initialized cisco_ios scanner")
+        _LOGGER.info("Initialized cisco_c9800 scanner")
+    
+    async def async_get_device_name(self, device: str) -> str | None:
+        """Get the firmware doesn't save the name of the wireless device."""
+        return None
 
     def scan_devices(self):
         """Scan for new devices and return a list with found device IDs."""
@@ -90,6 +94,7 @@ class CiscoDeviceScanner(DeviceScanner):
                                 hostkey_verify=False,
                                 device_params={'name': 'csr'}) as m:
                 output = []
+                self.last_results = []
                 # execute netconf operation
                 for rpc in PAYLOAD:
                     try:
@@ -97,6 +102,7 @@ class CiscoDeviceScanner(DeviceScanner):
                         data = response.xml
                     except RPCError as e:
                         data = e.xml
+                        _LOGGER.error(str(e))
                         pass
                     except Exception as e:
                         _LOGGER.error(str(e))
@@ -116,8 +122,5 @@ class CiscoDeviceScanner(DeviceScanner):
 
                     except Exception as e:
                         _LOGGER.error(str(e))
-                        return False
-
-
-             
-                return False
+        return False
+                    
