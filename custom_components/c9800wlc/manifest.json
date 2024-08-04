@@ -1,6 +1,7 @@
 {
     "domain": "c9800wlc",
     "name": "Cisco C9800",
+    "version": "0.1",
     "codeowners": ["@iholck"],
     "documentation": "https://www.home-assistant.io/integrations/cisco_ios",
     "iot_class": "local_polling",
