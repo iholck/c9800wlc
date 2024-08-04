@@ -1,5 +1,5 @@
 {
-    "domain": "cisco_c9800wlc",
+    "domain": "c9800wlc",
     "name": "Cisco C9800",
     "codeowners": ["@iholck"],
     "documentation": "https://www.home-assistant.io/integrations/cisco_ios",
